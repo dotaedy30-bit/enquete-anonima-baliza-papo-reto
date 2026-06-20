@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Enquete Anônima - Baliza Papo Reto</title>
+  <link rel="icon" type="image/png" href="https://res.cloudinary.com/dfv4cy1ed/image/upload/v1781992095/Captura_de_tela_2026-06-20_174704_azt0z0.png">
+  <link rel="apple-touch-icon" href="https://res.cloudinary.com/dfv4cy1ed/image/upload/v1781992095/Captura_de_tela_2026-06-20_174704_azt0z0.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="splash">
+    <div class="splash-content">
+      <div class="splash-logo-wrapper">
+        <img class="splash-logo" src="https://res.cloudinary.com/dfv4cy1ed/image/upload/v1781992095/Captura_de_tela_2026-06-20_174704_azt0z0.png" alt="Baliza Papo Reto">
+      </div>
+      <div class="splash-texts">
+        <h2 class="splash-title">ENQUETE ANÔNIMA</h2>
+        <p class="splash-group">Grupo Baliza Papo Reto</p>
+        <p class="splash-location">São João da Baliza - RR</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="app" class="hidden">
+    <header>
+      <div class="header-top">
+        <img class="header-logo" src="https://res.cloudinary.com/dfv4cy1ed/image/upload/v1781992095/Captura_de_tela_2026-06-20_174704_azt0z0.png" alt="Baliza Papo Reto">
+        <div class="header-text">
+          <span class="header-brand">BALIZA PAPO RETO</span>
+          <h1 class="header-title">Eleições 2026</h1>
+          <p class="header-subtitle">Estadual Suplementar</p>
+        </div>
+        <button class="hamburger-btn" id="hamburgerBtn" aria-label="Abrir painel de resultados">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+      <div class="header-location">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Roraima
+      </div>
+    </header>
+
+    <main>
+      <div class="totalization-badge">0,00% das seções totalizadas</div>
+
+      <div class="position-section">
+        <h2 class="position-title">Governador - RR</h2>
+      </div>
+
+      <div id="toast" class="toast hidden"></div>
+
+      <div id="candidates-container">
+        <div class="candidate-card placeholder">
+          <div class="placeholder-pulse"></div>
+        </div>
+        <div class="candidate-card placeholder">
+          <div class="placeholder-pulse"></div>
+        </div>
+        <div class="candidate-card placeholder">
+          <div class="placeholder-pulse"></div>
+        </div>
+      </div>
+
+      <footer class="app-footer">
+        <p>Enquete informal, sem valor eleitoral oficial.</p>
+      </footer>
+    </main>
+  </div>
+
+  <div id="resultModal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-header-text">
+          <span class="modal-brand">BALIZA PAPO RETO</span>
+          <h2 class="modal-title">Painel de Resultados</h2>
+        </div>
+        <button class="modal-close" id="modalClose" aria-label="Fechar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="chartContainer" class="chart-container">
+          <div class="chart-placeholder">
+            <div class="placeholder-pulse"></div>
+          </div>
+        </div>
+        <div id="infoCard" class="info-card">
+          <div class="placeholder-pulse" style="height:80px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
