@@ -117,14 +117,11 @@ function renderChart() {
   const withPct = state.candidates.map((c) => ({ ...c, pct: calcPct(c.votes) }));
   const sorted = [...withPct].sort((a, b) => b.pct - a.pct);
 
-  const maxPct = sorted[0].pct;
-  const maxBarHeight = window.innerWidth <= 380 ? 140 : window.innerWidth >= 640 ? 200 : 180;
-
   container.innerHTML = `
     <div class="chart-bar-group">
       ${sorted.map((c, i) => {
         const hasPhoto = c.photo_url && c.photo_url.trim() !== '';
-        const barHeight = maxPct > 0 ? Math.max(4, (c.pct / maxPct) * maxBarHeight) : 4;
+        const barHeight = Math.max(4, Math.min(c.pct, 100));
         return `
           <div class="chart-bar-item">
             <div class="chart-bar-avatar-wrapper">
@@ -156,7 +153,7 @@ function renderChart() {
       const i = Array.from(el.parentElement.parentElement.parentElement.parentElement.children).indexOf(el.parentElement.parentElement.parentElement);
       const candidate = sorted[i];
       if (candidate) {
-        const height = maxPct > 0 ? Math.max(4, (candidate.pct / maxPct) * maxBarHeight) : 4;
+        const height = Math.max(4, Math.min(candidate.pct, 100));
         el.style.height = `${height}px`;
       }
     });
