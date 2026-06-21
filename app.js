@@ -1,4 +1,9 @@
 const API_BASE = 'https://enquete-anonima-bpr.onrender.com/api';
+const ESTIMATED_TOTAL = 3000;
+
+function calcPct(votes) {
+  return (votes / ESTIMATED_TOTAL) * 100;
+}
 
 const state = {
   hasVoted: !!localStorage.getItem('poll_has_voted'),
@@ -56,6 +61,8 @@ function renderCandidates() {
 
     const isAnulado = c.status && c.status.toLowerCase().includes('anulado');
 
+    const pct = calcPct(c.votes);
+
     card.innerHTML = `
       <div class="candidate-header">
         ${
@@ -75,11 +82,11 @@ function renderCandidates() {
       <div class="candidate-stats">
         <div class="stat-row">
           <span class="stat-votes"><strong id="votes-${c.id}">${c.votes}</strong> votos</span>
-          <span class="stat-percentage" id="pct-${c.id}">${c.percentage.toFixed(2).replace('.', ',')}%</span>
+          <span class="stat-percentage" id="pct-${c.id}">${pct.toFixed(2).replace('.', ',')}%</span>
         </div>
       </div>
       <div class="bar-wrapper">
-        <div class="bar-fill" id="bar-${c.id}" style="width:${c.percentage}%"></div>
+        <div class="bar-fill" id="bar-${c.id}" style="width:${pct}%"></div>
       </div>
       <button class="vote-btn ${isVoted ? 'voted' : ''}" id="btn-${c.id}" ${state.hasVoted ? 'disabled' : ''}>
         ${isVoted ? 'Seu voto' : state.hasVoted ? 'Votação encerrada' : 'Votar'}
@@ -107,53 +114,21 @@ function renderChart() {
     return;
   }
 
-  const sorted = [...state.candidates].sort((a, b) => b.percentage - a.percentage);
+  const withPct = state.candidates.map((c) => ({ ...c, pct: calcPct(c.votes) }));
+  const sorted = [...withPct].sort((a, b) => b.pct - a.pct);
 
-  if (state.totalVotes === 0) {
-    container.innerHTML = `
-      <div class="chart-bar-group">
-        ${sorted.map((c, i) => {
-          const hasPhoto = c.photo_url && c.photo_url.trim() !== '';
-          return `
-            <div class="chart-bar-item">
-              <div class="chart-bar-avatar-wrapper">
-                <div class="chart-bar-pct">0,00%</div>
-                ${
-                  hasPhoto
-                    ? `<img class="chart-bar-avatar" src="${c.photo_url}" alt="${c.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="chart-bar-avatar-placeholder" style="display:none">${getInitials(c.name)}</div>`
-                    : `<div class="chart-bar-avatar-placeholder">${getInitials(c.name)}</div>`
-                }
-              </div>
-              <div class="chart-bar-fill-wrapper">
-                <div class="chart-bar-track">
-                  <div class="chart-bar-fill color-${i + 1}" style="height:4px"></div>
-                </div>
-                <div class="chart-bar-info">
-                  <div class="chart-bar-name">${c.name}</div>
-                  <div class="chart-bar-party">${c.party}</div>
-                  <div class="chart-bar-votes">${c.votes} votos</div>
-                </div>
-              </div>
-            </div>
-          `;
-        }).join('')}
-      </div>
-    `;
-    return;
-  }
-
-  const maxPct = sorted[0].percentage;
+  const maxPct = sorted[0].pct;
   const maxBarHeight = window.innerWidth <= 380 ? 140 : window.innerWidth >= 640 ? 200 : 180;
 
   container.innerHTML = `
     <div class="chart-bar-group">
       ${sorted.map((c, i) => {
         const hasPhoto = c.photo_url && c.photo_url.trim() !== '';
-        const barHeight = Math.max(4, (c.percentage / maxPct) * maxBarHeight);
+        const barHeight = maxPct > 0 ? Math.max(4, (c.pct / maxPct) * maxBarHeight) : 4;
         return `
           <div class="chart-bar-item">
             <div class="chart-bar-avatar-wrapper">
-              <div class="chart-bar-pct">${c.percentage.toFixed(2).replace('.', ',')}%</div>
+              <div class="chart-bar-pct">${c.pct.toFixed(2).replace('.', ',')}%</div>
               ${
                 hasPhoto
                   ? `<img class="chart-bar-avatar" src="${c.photo_url}" alt="${c.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="chart-bar-avatar-placeholder" style="display:none">${getInitials(c.name)}</div>`
@@ -181,7 +156,7 @@ function renderChart() {
       const i = Array.from(el.parentElement.parentElement.parentElement.parentElement.children).indexOf(el.parentElement.parentElement.parentElement);
       const candidate = sorted[i];
       if (candidate) {
-        const height = Math.max(4, (candidate.percentage / maxPct) * maxBarHeight);
+        const height = maxPct > 0 ? Math.max(4, (candidate.pct / maxPct) * maxBarHeight) : 4;
         el.style.height = `${height}px`;
       }
     });
@@ -189,6 +164,7 @@ function renderChart() {
 }
 
 function renderInfoCard() {
+  const participation = (state.totalVotes / ESTIMATED_TOTAL) * 100;
   const container = document.getElementById('infoCard');
   container.innerHTML = `
     <div class="info-card-title">Dados da Enquete</div>
@@ -197,12 +173,12 @@ function renderInfoCard() {
       <span class="info-card-value highlight">${state.totalVotes}</span>
     </div>
     <div class="info-card-row">
-      <span class="info-card-label">Votos estimados do grupo</span>
-      <span class="info-card-value analysis">Em análise</span>
+      <span class="info-card-label">Base estimada da enquete</span>
+      <span class="info-card-value highlight">${ESTIMATED_TOTAL.toLocaleString('pt-BR')} pessoas</span>
     </div>
     <div class="info-card-row">
-      <span class="info-card-label">Votos possivelmente fora do grupo</span>
-      <span class="info-card-value analysis">Em análise</span>
+      <span class="info-card-label">Participação estimada</span>
+      <span class="info-card-value highlight">${participation.toFixed(2).replace('.', ',')}%</span>
     </div>
   `;
 }
